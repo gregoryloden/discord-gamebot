@@ -1,7 +1,8 @@
 import discord
+import time
 
 from secrets import DISCORD_TOKEN
-from game_common import COMMAND_PREFIX
+from game_common import GameInstanceBase, COMMAND_PREFIX
 from game_coin import GameCoin
 from game_cthulu import GameCthulu
 
@@ -14,7 +15,9 @@ class GameClient(discord.Client):
 		self.active_games = {}
 
 	async def on_ready(self):
-		print("\n================================\n" + str(self.user) + " connected to servers:")
+		print("\n================================")
+		print(time.strftime("%Y-%m-%d %H:%M:%S"))
+		print(str(self.user) + " connected to servers:")
 		for guild in self.guilds:
 			print("    - " + guild.name + " " + str(guild.id))
 			for channel in guild.channels:
@@ -44,7 +47,8 @@ class GameClient(discord.Client):
 		for available_game in self.available_games:
 			game_instance = await available_game.start_new_game(message)
 			if game_instance:
-				self.active_games[message.channel.id] = game_instance
+				if isinstance(game_instance, GameInstanceBase):
+					self.active_games[message.channel.id] = game_instance
 				break
 
 	async def handle_private_message(self, message):
