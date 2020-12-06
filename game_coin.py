@@ -10,11 +10,11 @@ HEADS_COMMAND = COMMAND_PREFIX + HEADS
 TAILS_COMMAND = COMMAND_PREFIX + TAILS
 
 class GameCoinInstance(GameInstanceBase):
-	async def handle_public_message(self, message):
+	async def handle_public_message(self, base_command, message):
 		#wrong command, game is still going
-		if message.content != HEADS_COMMAND and message.content != TAILS_COMMAND:
+		if base_command != HEADS_COMMAND and base_command != TAILS_COMMAND:
 			return True
-		await self.conclude(message, message.content == HEADS_COMMAND)
+		await self.conclude(message, base_command == HEADS_COMMAND)
 		return False
 
 	@staticmethod
@@ -25,8 +25,8 @@ class GameCoinInstance(GameInstanceBase):
 			"Result: " + (HEADS if was_heads else TAILS) + ". You " + ("win!" if correct_guess else "lose."))
 
 class GameCoin(GameBase):
-	async def start_new_game(self, message):
-		if not message.content.startswith(COIN_COMMAND):
+	async def start_new_game(self, base_command, message):
+		if base_command != COIN_COMMAND:
 			return None
 
 		#the game was started and finished in one command

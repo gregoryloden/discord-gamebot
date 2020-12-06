@@ -4,7 +4,6 @@ import time
 from secrets import DISCORD_TOKEN
 from game_common import GameInstanceBase, COMMAND_PREFIX
 from game_coin import GameCoin
-from game_cthulu import GameCthulu
 
 ENDGAME_COMMAND = COMMAND_PREFIX + "endgame"
 
@@ -36,16 +35,19 @@ class GameClient(discord.Client):
 	async def handle_public_message(self, message):
 		if not message.content.startswith(COMMAND_PREFIX):
 			return
+		space_i = message.content.find(" ")
+		base_command = message.content if space_i == -1 else message.content[:space_i]
 
 		active_game = self.active_games.get(message.channel.id)
 		if active_game:
-			if message.content == ENDGAME_COMMAND or not await active_game.handle_public_message(message):
+			if (message.content == ENDGAME_COMMAND
+					or not await active_game.handle_public_message(base_command, message)):
 				await message.channel.send("Game concluded.")
 				del self.active_games[message.channel.id]
 			return
 
 		for available_game in self.available_games:
-			game_instance = await available_game.start_new_game(message)
+			game_instance = await available_game.start_new_game(base_command, message)
 			if game_instance:
 				if isinstance(game_instance, GameInstanceBase):
 					self.active_games[message.channel.id] = game_instance
