@@ -4,6 +4,7 @@ import time
 from secrets import DISCORD_TOKEN
 from game_common import GameInstanceBase, COMMAND_PREFIX
 from game_coin import GameCoin
+from game_cthulhu import GameCthulhu
 
 ENDGAME_COMMAND = COMMAND_PREFIX + "endgame"
 
@@ -57,6 +58,7 @@ class GameClient(discord.Client):
 		pass
 
 client = GameClient(games = [
+	GameCthulhu(),
 	GameCoin()
 ])
 client.run(DISCORD_TOKEN)
