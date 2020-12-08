@@ -176,7 +176,7 @@ class GameCthulhu(GameBase):
 		if players_count < 3:
 			await message.channel.send(GAME_TITLE + " needs at least 3 players to start")
 			return True
-		for player in players:
+		for player in message.mentions:
 			if player.bot:
 				await message.channel.send(player.mention + " is a bot and cannot play")
 				return True
