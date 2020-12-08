@@ -62,7 +62,7 @@ class GameCthulhuInstance(GameInstanceBase):
 		deck += [BLANK_CARD] * (player_count * cards_per_hand - len(deck))
 		self.next_player = self.all_players[int(random.random() * player_count)]
 		for player in self.all_players:
-			hand = extract_random_hand(cards_per_hand, deck)
+			hand = self.extract_random_hand(cards_per_hand, deck)
 			self.hands[player] = hand
 			hand_message_contents = []
 			for (card_value, card_text) in HAND_CARD_ORDER:
