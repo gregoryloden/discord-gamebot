@@ -1,5 +1,4 @@
 import random
-import re
 
 from game_common import GameInstanceBase, GameBase, COMMAND_PREFIX
 
@@ -18,8 +17,6 @@ BLANK_CARD = ":blue_square:"
 ELDER_SIGN_CARD_TEXT = ELDER_SIGN_CARD + " **Elder Sign**"
 CTHULHU_CARD_TEXT = CTHULHU_CARD + " **Cthulhu**"
 BLANK_CARD_TEXT = BLANK_CARD + " **blank card**"
-INVESTIGATORS = ":blue_square: **Investigators**"
-CULTISTS = ":red_square: **Cultists**"
 HAND_CARD_ORDER = [
 	(ELDER_SIGN_CARD, ELDER_SIGN_CARD_TEXT),
 	(CTHULHU_CARD, CTHULHU_CARD_TEXT),
@@ -109,10 +106,12 @@ class GameCthulhuInstance(GameInstanceBase):
 		self.current_turn_message = await self.channel.send("\n".join(state))
 
 	async def post_end_game_state(self, investigators_won):
+		investigators = ":blue_square: **Investigators**"
+		cultists = ":red_square: **Cultists**"
 		state = [
-			"Game over. " + (INVESTIGATORS if investigators_won else CULTISTS) + " win!",
-			INVESTIGATORS + ": " + " ".join(investigator.mention for investigator in self.investigators),
-			CULTISTS + ": " + " ".join(cultist.mention for cultist in self.cultists)
+			"Game over. " + (investigators if investigators_won else cultists) + " win!",
+			investigators + ": " + " ".join(investigator.mention for investigator in self.investigators),
+			cultists + ": " + " ".join(cultist.mention for cultist in self.cultists)
 		]
 		await self.channel.send("\n".join(state))
 
@@ -172,7 +171,7 @@ class GameCthulhu(GameBase):
 		if base_command not in START_GAME_COMMANDS:
 			return None
 
-		contents = re.sub(r"\s+", " ", message.content).split(" ")
+		contents = message.content.split(" ")
 		players_count = len(message.mentions)
 		if players_count < 3:
 			await message.channel.send(GAME_TITLE + " needs at least 3 players to start")

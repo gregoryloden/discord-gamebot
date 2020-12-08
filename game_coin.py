@@ -1,5 +1,4 @@
 import random
-import re
 
 from game_common import GameInstanceBase, GameBase, COMMAND_PREFIX
 
@@ -32,7 +31,7 @@ class GameCoin(GameBase):
 			return None
 
 		#the game was started and finished in one command
-		contents = re.sub(r"\s+", " ", message.content).split(" ")
+		contents = message.content.split(" ")
 		if len(contents) >= 2 and contents[1] in GUESSES:
 			await GameCoinInstance.conclude(message, contents[1] == HEADS)
 			return True

@@ -1,5 +1,6 @@
 import discord
 import time
+import re
 
 from secrets import DISCORD_TOKEN
 from game_common import GameInstanceBase, COMMAND_PREFIX
@@ -26,7 +27,7 @@ class GameClient(discord.Client):
 		print("----------------")
 
 	async def on_message(self, message):
-		if message.author == self.user:
+		if message.author.id == self.user.id:
 			return
 		if isinstance(message.channel, discord.DMChannel):
 			await self.handle_private_message(message)
@@ -36,6 +37,7 @@ class GameClient(discord.Client):
 	async def handle_public_message(self, message):
 		if not message.content.startswith(COMMAND_PREFIX):
 			return
+		message.content = re.sub(r"\s+", " ", message.content)
 		space_i = message.content.find(" ")
 		base_command = message.content if space_i == -1 else message.content[:space_i]
 
@@ -52,7 +54,7 @@ class GameClient(discord.Client):
 			if game_instance:
 				if isinstance(game_instance, GameInstanceBase):
 					self.active_games[message.channel.id] = game_instance
-				break
+				return
 
 	async def handle_private_message(self, message):
 		pass
