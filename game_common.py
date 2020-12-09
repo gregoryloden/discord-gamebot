@@ -2,7 +2,17 @@ import random
 
 COMMAND_PREFIX = "!"
 
-class GameInstanceBase:
+class BotUser:
+	def __init__(self, name):
+		self.name = name
+		self.id = object()
+		self.mention = "@" + name
+		self.bot = False
+
+	async def send(self, message):
+		print(f" : {self.name} << {message}")
+
+class ActiveGame:
 	@staticmethod
 	def extract_random_hand(count, deck):
 		hand = []
@@ -30,6 +40,6 @@ class GameInstanceBase:
 	async def handle_public_message(self, base_command, message):
 		return False
 
-class GameBase:
+class AvailableGame:
 	async def start_new_game(self, base_command, message):
 		return None

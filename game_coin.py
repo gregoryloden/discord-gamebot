@@ -1,6 +1,6 @@
 import random
 
-from game_common import GameInstanceBase, GameBase, COMMAND_PREFIX
+from game_common import ActiveGame, AvailableGame, COMMAND_PREFIX
 
 COIN_COMMAND = COMMAND_PREFIX + "coin"
 HEADS = "heads"
@@ -10,7 +10,7 @@ HEADS_COMMAND = COMMAND_PREFIX + HEADS
 TAILS_COMMAND = COMMAND_PREFIX + TAILS
 GUESS_COMMANDS = [HEADS_COMMAND, TAILS_COMMAND]
 
-class GameCoinInstance(GameInstanceBase):
+class GameCoinInstance(ActiveGame):
 	async def handle_public_message(self, base_command, message):
 		#wrong command, the game is still going
 		if base_command not in GUESS_COMMANDS:
@@ -25,7 +25,7 @@ class GameCoinInstance(GameInstanceBase):
 		await message.channel.send(
 			"Result: {}. You {}".format(HEADS if was_heads else TAILS, "win!" if correct_guess else "lose."))
 
-class GameCoin(GameBase):
+class GameCoin(AvailableGame):
 	async def start_new_game(self, base_command, message):
 		if base_command != COIN_COMMAND:
 			return None
