@@ -72,20 +72,24 @@ class GameCthulhuInstance(ActiveGame):
 				if cards > 0:
 					hand_message_contents.append(f"**{cards}**x {card_text}")
 			hand.insert(0, len(hand))
-			await player.send(f"Round {self.current_round}: You have {self.list_phrase(hand_message_contents)}")
+			await player.send(
+				"Round {}/{}: You have {}".format(
+					self.current_round, TOTAL_ROUNDS, self.list_phrase(hand_message_contents)))
 		await self.post_game_state(None)
 
 	async def post_game_state(self, last_found_card):
 		player_count = len(self.all_players)
 		round_over = self.round_progress == player_count
 		state = [
-			"Round {}{}: {}/{} cards flipped, **{}**x {} found total".format(
+			"Round {}/{}{}: {}/{} cards flipped, **{}**x {} found total, **{}** left".format(
 				self.current_round,
+				TOTAL_ROUNDS,
 				" concluded" if round_over else "",
 				self.round_progress,
 				player_count,
 				self.elder_signs_found,
-				ELDER_SIGNS_CARD_TEXT)
+				ELDER_SIGNS_CARD_TEXT,
+				player_count - self.elder_signs_found)
 		]
 		if last_found_card:
 			last_found_card_text = (
@@ -131,7 +135,7 @@ class GameCthulhuInstance(ActiveGame):
 				await self.channel.send(message.author.mention + ", you are not playing this game")
 			return True
 		if len(message.mentions) != 1:
-			await self.channel.send(message.author.mention + ", you must investigate one player")
+			await self.channel.send(message.author.mention + ", you must investigate one `@player`")
 			return True
 		to_player_id = message.mentions[0].id
 		if to_player_id == message.author.id:

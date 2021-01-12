@@ -48,7 +48,7 @@ class GameClient(discord.Client):
 		if active_game:
 			if (message.content == ENDGAME_COMMAND
 					or not await active_game.handle_public_message(base_command, message)):
-				await message.channel.send("Game concluded.")
+				await message.channel.send("🎲 Game concluded.")
 				del self.active_games[message.channel.id]
 			#speak the message as a bot user
 			elif base_command == BOTSAY_COMMAND:
