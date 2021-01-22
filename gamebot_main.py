@@ -2,7 +2,7 @@ import discord
 import time
 import re
 
-from secrets import DISCORD_TOKEN
+from secrets import DISCORD_TOKEN, GUILD_WHITELISTS
 from game_common import ActiveGame, BotUser, COMMAND_PREFIX
 from game_coin import GameCoin
 from game_cthulhu import GameCthulhu
@@ -40,6 +40,10 @@ class GameClient(discord.Client):
 	async def handle_public_message(self, message):
 		if not message.content.startswith(COMMAND_PREFIX):
 			return
+		guild_whitelist = GUILD_WHITELISTS.get(message.channel.guild.id, None)
+		if guild_whitelist and message.channel.id not in guild_whitelist:
+			return
+
 		message.content = re.sub(r"\s+", " ", message.content)
 		space_i = message.content.find(" ")
 		base_command = message.content if space_i == -1 else message.content[:space_i]
