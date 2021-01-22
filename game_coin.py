@@ -26,6 +26,15 @@ class GameCoinInstance(ActiveGame):
 			"Result: {}. You {}".format(HEADS if was_heads else TAILS, "win!" if correct_guess else "lose."))
 
 class GameCoin(AvailableGame):
+	def base_command(self):
+		return COIN_COMMAND
+
+	async def share_rules(self, channel):
+		await channel.send(
+			f"To flip a coin, start the game with `{COIN_COMMAND}`" +
+			f" and input your guess with `{HEADS_COMMAND}` or `{TAILS_COMMAND}`." +
+			f"\nAlternatively, flip a coin with `{COIN_COMMAND} {HEADS}` or `{COIN_COMMAND} {TAILS}`")
+
 	async def start_new_game(self, base_command, message):
 		if base_command != COIN_COMMAND:
 			return None

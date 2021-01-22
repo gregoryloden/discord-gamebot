@@ -7,6 +7,7 @@ from game_common import ActiveGame, BotUser, COMMAND_PREFIX
 from game_coin import GameCoin
 from game_cthulhu import GameCthulhu
 
+HELP_COMMAND = COMMAND_PREFIX + "help"
 ENDGAME_COMMAND = COMMAND_PREFIX + "endgame"
 BOTTEST_COMMAND = COMMAND_PREFIX + "bottest"
 BOTSAY_COMMAND = COMMAND_PREFIX + "botsay"
@@ -49,6 +50,26 @@ class GameClient(discord.Client):
 		space_i = message.content.find(" ")
 		base_command = message.content if space_i == -1 else message.content[:space_i]
 
+		available_games = self.channel_available_games.get(message.channel.id, self.available_games)
+		if base_command == HELP_COMMAND:
+			help_contents = message.content.split(" ")
+			if len(help_contents) >= 2:
+				help_command = COMMAND_PREFIX + help_contents[1]
+				for game in available_games:
+					if game.base_command() == help_command:
+						await game.share_rules(message.channel)
+						return
+				await message.channel.send(
+					"Unknown command `" + help_command + "`; use `!help` to list all available games")
+			else:
+				help_message = ["Available games:"]
+				for game in available_games:
+					help_message.append("    `" + game.base_command() + "`")
+				help_message.append("For rules about a particular game, use `" + HELP_COMMAND + " command`")
+				help_message.append("You can end any game with `" + ENDGAME_COMMAND + "`")
+				await message.channel.send("\n".join(help_message))
+			return
+
 		active_game = self.active_games.get(message.channel.id)
 		if active_game:
 			if (message.content == ENDGAME_COMMAND
@@ -79,7 +100,6 @@ class GameClient(discord.Client):
 				await self.handle_public_message(message)
 			return
 
-		available_games = self.channel_available_games.get(message.channel.id, self.available_games)
 		for available_game in available_games:
 			game_instance = await available_game.start_new_game(base_command, message)
 			if game_instance:

@@ -38,8 +38,16 @@ class ActiveGame:
 			return phrase_without_last + ", and " + last_item
 
 	async def handle_public_message(self, base_command, message):
+		await message.channel.send("<response missing>")
 		return False
 
 class AvailableGame:
+	def base_command(self):
+		return "<command missing>"
+
+	async def share_rules(self, channel):
+		await channel.send("<rules missing>")
+
 	async def start_new_game(self, base_command, message):
+		await message.channel.send("<game missing>")
 		return None
