@@ -15,6 +15,7 @@ class GameClient(discord.Client):
 	def __init__(self, games):
 		super().__init__()
 		self.available_games = games
+		self.channel_available_games = {}
 		self.active_games = {}
 		self.bot_user_map = {}
 
@@ -78,7 +79,8 @@ class GameClient(discord.Client):
 				await self.handle_public_message(message)
 			return
 
-		for available_game in self.available_games:
+		available_games = self.channel_available_games.get(message.channel.id, self.available_games)
+		for available_game in available_games:
 			game_instance = await available_game.start_new_game(base_command, message)
 			if game_instance:
 				if isinstance(game_instance, ActiveGame):
