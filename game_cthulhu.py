@@ -194,26 +194,19 @@ class GameCthulhu(AvailableGame):
 				await message.channel.send(player.mention + " is a bot and cannot play")
 				return True
 
-		#automatically determine cultist count, but allow players to override
+		#automatically determine cultist count
 		#default: 3/4/5/6 get 2, 7,8,9 get 3, etc.
 		cultist_count = max((players_count + 2) // 3, 2)
-		for content in contents:
-			if not content.isdigit():
-				continue
-
-			cultist_count = int(content)
-			if cultist_count >= players_count:
-				await message.channel.send("Please specify a cultist count less than " + str(players_count))
-				return True
-			break
 
 		#a 3 player game can have 0-2 cultists
 		if players_count == 3:
 			extra_roles_count = 2
-			cultist_count_text = str(max(cultist_count - 2, 0)) + "-" + str(cultist_count)
+			cultist_count_text = "0-2"
+		#player counts divisible by 3 have exactly 1/3 of players as cultists
 		elif players_count % 3 == 0:
 			extra_roles_count = 0
 			cultist_count_text = str(cultist_count)
+		#other player counts have either floor() or ceil() of 1/3 of players as cultists
 		else:
 			extra_roles_count = 1
 			cultist_count_text = str(max(cultist_count - 1, 0)) + " or " + str(cultist_count)
