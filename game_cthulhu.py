@@ -319,6 +319,6 @@ class GameCthulhu(AvailableGame):
 			instance.text_a_player = "a kitten"
 			instance.text_one_player = "the kitten of one `@player`"
 			instance.text_yourself = "your kitten"
-			instance.text_you_found = "Your kitten"
+			instance.text_you_found = "Their kitten"
 		self.reskin_instance = reskin_to_kitten
 		return self
