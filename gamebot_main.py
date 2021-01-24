@@ -125,6 +125,7 @@ class GameClient(discord.Client):
 
 client = GameClient(games = [
 	GameCthulhu(),
+	GameCthulhu().kitten_reskin(),
 	GameCoin()
 ])
 client.run(DISCORD_TOKEN)
