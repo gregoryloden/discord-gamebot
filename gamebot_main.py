@@ -64,7 +64,7 @@ class GameClient(discord.Client):
 			else:
 				help_message = ["Available games:"]
 				for game in available_games:
-					help_message.append("    `" + game.base_command() + "`")
+					help_message.append("    `" + game.base_command()[1:] + "`")
 				help_message.append("For rules about a particular game, use `" + HELP_COMMAND + " command`")
 				help_message.append("You can end any game with `" + ENDGAME_COMMAND + "`")
 				await message.channel.send("\n".join(help_message))
