@@ -12,6 +12,9 @@ ENDGAME_COMMAND = COMMAND_PREFIX + "endgame"
 BOTTEST_COMMAND = COMMAND_PREFIX + "bottest"
 BOTSAY_COMMAND = COMMAND_PREFIX + "botsay"
 
+def timestamp():
+	return time.strftime("%Y-%m-%d %H:%M:%S")
+
 class GameClient(discord.Client):
 	def __init__(self, games):
 		super().__init__()
@@ -19,17 +22,40 @@ class GameClient(discord.Client):
 		self.channel_available_games = {}
 		self.active_games = {}
 		self.bot_user_map = {}
+		self.last_known_channels = {}
 
 	async def on_ready(self):
-		print("\n================================")
-		print(time.strftime("%Y-%m-%d %H:%M:%S"))
-		print(str(self.user) + " connected to servers:")
+		connected_channels = {}
+		disconnected_channels = {}
 		for guild in self.guilds:
-			print("    - " + guild.name + " " + str(guild.id))
-			for channel in guild.channels:
-				if isinstance(channel, discord.TextChannel):
-					print("        #" + channel.name + " " + str(channel.id))
-		print("----------------")
+			old_channels = self.last_known_channels.get(guild, None)
+			new_channels = {channel for channel in guild.channels if isinstance(channel, discord.TextChannel)}
+			self.last_known_channels[guild] = new_channels
+			if not old_channels:
+				connected_channels[guild] = new_channels
+				continue
+			guild_connected_channels = new_channels - old_channels
+			if guild_connected_channels:
+				connected_channels[guild] = guild_connected_channels
+			guild_disconnected_channels = old_channels - new_channels
+			if guild_disconnected_channels:
+				disconnected_channels[guild] = guild_disconnected_channels
+		if connected_channels or disconnected_channels:
+			print("\n================================")
+			print(timestamp())
+			channels_with_actions = \
+				[("connected to", connected_channels), ("disconnected from", disconnected_channels)]
+			for action, channels in channels_with_actions:
+				if not channels:
+					continue
+				print(f"{self.user} {action} servers:")
+				for guild, guild_channels in channels.items():
+					print("    - " + guild.name + " " + str(guild.id))
+					for channel in guild_channels:
+						print("        #" + channel.name + " " + str(channel.id))
+			print("----------------")
+		else:
+			print(timestamp() + ": Back online")
 
 	async def on_message(self, message):
 		if message.author.id == self.user.id:
@@ -121,7 +147,7 @@ class GameClient(discord.Client):
 			await self.handle_public_message(message)
 
 	async def handle_private_message(self, message):
-		print(f"Private message from {message.author.mention} {message.author}: {message.content}")
+		print(f"{timestamp()}: Private message from {message.author.mention} {message.author}: {message.content}")
 
 client = GameClient(games = [
 	GameCthulhu(),
