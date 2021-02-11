@@ -50,9 +50,9 @@ class GameClient(discord.Client):
 					continue
 				print(f"{self.user} {action} servers:")
 				for guild, guild_channels in channels.items():
-					print("    - " + guild.name + " " + str(guild.id))
+					print(f"    - {guild.name} {guild.id}")
 					for channel in guild_channels:
-						print("        #" + channel.name + " " + str(channel.id))
+						print(f"        #{channel.name} {channel.id}")
 			print("----------------")
 		else:
 			print(timestamp() + ": Back online")
