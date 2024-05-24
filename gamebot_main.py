@@ -17,7 +17,7 @@ def timestamp():
 
 class GameClient(discord.Client):
 	def __init__(self, games):
-		super().__init__()
+		super().__init__(intents=discord.Intents.default())
 		self.available_games = games
 		self.channel_available_games = {}
 		self.active_games = {}
