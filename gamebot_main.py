@@ -154,4 +154,4 @@ client = GameClient(games = [
 	GameCthulhu().kitten_reskin(),
 	GameCoin()
 ])
-client.run(DISCORD_TOKEN)
+client.run(DISCORD_TOKEN, log_handler=None)
